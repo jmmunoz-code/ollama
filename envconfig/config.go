@@ -236,6 +236,8 @@ var (
 	EnableIntegratedGPU = BoolWithDefault("OLLAMA_IGPU_ENABLE")
 	// NoCloudEnv checks the OLLAMA_NO_CLOUD environment variable.
 	NoCloudEnv = Bool("OLLAMA_NO_CLOUD")
+	// JetsonDropCache enables nvmap page cache flush after model unload on Tegra/Jetson.
+	JetsonDropCache = Bool("OLLAMA_JETSON_DROP_CACHE")
 )
 
 func String(s string) func() string {
@@ -336,6 +338,7 @@ func AsMap() map[string]EnvVar {
 		"OLLAMA_CONTEXT_LENGTH":       {"OLLAMA_CONTEXT_LENGTH", ContextLength(), "Context length to use unless otherwise specified (default: 4k/32k/256k based on VRAM)"},
 		"OLLAMA_EDITOR":               {"OLLAMA_EDITOR", Editor(), "Path to editor for interactive prompt editing (Ctrl+G)"},
 		"OLLAMA_REMOTES":              {"OLLAMA_REMOTES", Remotes(), "Allowed hosts for remote models (default \"ollama.com\")"},
+		"OLLAMA_JETSON_DROP_CACHE":    {"OLLAMA_JETSON_DROP_CACHE", JetsonDropCache(), "Drop nvmap page cache after model unload on NVIDIA Jetson (Tegra)"},
 
 		// Informational
 		"HTTP_PROXY":  {"HTTP_PROXY", String("HTTP_PROXY")(), "HTTP proxy"},

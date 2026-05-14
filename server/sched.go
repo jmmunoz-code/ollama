@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"os/exec"
 	"reflect"
 	"runtime"
 	"slices"
@@ -457,6 +458,18 @@ func (s *Scheduler) processCompleted(ctx context.Context) {
 				s.loadedMu.Unlock()
 				slog.Debug("runner terminated and removed from list, blocking for VRAM recovery", "runner", runner)
 				<-finished
+
+				// === JETSON NVMap CACHE CLEANUP ===
+				// On Jetson, nvmap retains physical pages after cudaFree.
+				// If OLLAMA_JETSON_DROP_CACHE=1, force kernel to reclaim them.
+				if envconfig.JetsonDropCache() {
+					if err := jetsonDropCaches(); err != nil {
+						slog.Warn("Jetson cache drop failed", "error", err)
+					} else {
+						slog.Debug("Jetson nvmap caches dropped", "model", runner.modelKey)
+					}
+				}
+
 				runner.refMu.Unlock()
 				slog.Debug("sending an unloaded event", "runner", runner)
 				s.unloadedCh <- struct{}{}
@@ -1737,3 +1750,26 @@ func (s *Scheduler) expireRunner(model *Model) {
 		runner.refMu.Unlock()
 	}
 }
+<<<<<<< HEAD
+=======
+
+// jetsonDropCaches forces the kernel to drop page caches and reclaim nvmap pages.
+// Calls the setuid helper so ollama can run as unprivileged user 'ollama'.
+func jetsonDropCaches() error {
+        if _, err := os.Stat("/etc/nv_tegra_release"); err != nil {
+                return nil // Not a Jetson, no-op
+        }
+
+        const helperBin = "/usr/local/sbin/ollama-drop-cache"
+        if _, err := os.Stat(helperBin); err != nil {
+                return fmt.Errorf("nvmap helper not found at %s: %w", helperBin, err)
+        }
+
+        cmd := exec.Command(helperBin)
+        cmd.Env = nil
+        if out, err := cmd.CombinedOutput(); err != nil {
+                return fmt.Errorf("nvmap helper failed: %w — %s", err, out)
+        }
+        return nil
+}
+>>>>>>> e4312697 (feat: Jetson nvmap drop-caches support)
