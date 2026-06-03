@@ -1750,8 +1750,6 @@ func (s *Scheduler) expireRunner(model *Model) {
 		runner.refMu.Unlock()
 	}
 }
-<<<<<<< HEAD
-=======
 
 // jetsonDropCaches forces the kernel to drop page caches and reclaim nvmap pages.
 // Calls the setuid helper so ollama can run as unprivileged user 'ollama'.
@@ -1772,4 +1770,3 @@ func jetsonDropCaches() error {
         }
         return nil
 }
->>>>>>> e4312697 (feat: Jetson nvmap drop-caches support)

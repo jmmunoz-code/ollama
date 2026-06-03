@@ -22,7 +22,7 @@ Environment="OLLAMA_HOST=0.0.0.0"
 Environment="OLLAMA_GPU_OVERHEAD=2147483648"
 
 # Jetson-specific: JetPack version hint for CUDA compatibility
-Environment="JETSON_JETPACK=7.1"
+Environment="JETSON_JETPACK=7.2"
 
 # Jetson-specific: drop nvmap page cache after model unload
 # Requires /usr/local/sbin/ollama-drop-cache (setuid root, group ollama)
