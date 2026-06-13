@@ -513,7 +513,7 @@ if(OLLAMA_HAVE_LLAMA_SERVER)
         list(APPEND _cpu_args
             -DBUILD_SHARED_LIBS=ON
             -DGGML_BACKEND_DL=ON
-            -DGGML_CPU_ALL_VARIANTS=ON)
+            -DGGML_CPU_ALL_VARIANTS=OFF)
         if(WIN32)
             list(APPEND _cpu_args -DGGML_OPENMP=ON)
         endif()

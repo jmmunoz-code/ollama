@@ -1,0 +1,41 @@
+[Unit]
+Description=Ollama AI Model Runner with changes to run on NVIDIA Jetson
+Documentation=https://ollama.com
+After=network.target
+
+[Service]
+Type=simple
+
+# Run as unprivileged user
+User=ollama
+Group=ollama
+
+ExecStart=/usr/local/bin/ollama serve
+
+Restart=on-failure
+RestartSec=5
+
+# Networking
+Environment="OLLAMA_HOST=0.0.0.0"
+
+# GPU memory reserved as overhead buffer (2GB)
+Environment="OLLAMA_GPU_OVERHEAD=2147483648"
+
+# Jetson-specific: JetPack version hint for CUDA compatibility
+Environment="JETSON_JETPACK=7.2"
+
+# Jetson-specific: drop nvmap page cache after model unload
+# Requires /usr/local/sbin/ollama-drop-cache (setuid root, group ollama)
+Environment="OLLAMA_JETSON_DROP_CACHE=1"
+
+# Allow large number of open file descriptors
+LimitNOFILE=1048576
+
+# Allow locking memory pages (needed for large model weights)
+LimitMEMLOCK=infinity
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
