@@ -1,9 +1,11 @@
 name: release
 
+# Disabled automatic tag-triggered releases for this fork.
+# The upstream release workflow requires Ollama's signing secrets, paid runners,
+# and multi-platform build infrastructure which are not available in this fork.
+# Run manually from the GitHub UI if a custom release is ever needed.
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 env:
   CGO_CFLAGS: '-O3'
